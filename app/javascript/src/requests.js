@@ -35,6 +35,6 @@ export var postTask = function (content, successCB, errorCB) {
 };
 
 
-// indexTasks();
+indexTasks();
 
 //postTask('this is some other task...');

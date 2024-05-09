@@ -1,9 +1,16 @@
 <%= javascript_pack_tag 'index', 'data-turbolinks-track': 'reload' %>
 
 <div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h1 class="text-center mt-4">To Do List</h1>
+  <h1 class="text-center my-3 fw-bold display-4">To Do List</h1>
+  <hr class="mb-5" />
+  <div class="row d-flex justify-content-center text-center">
+    <div class="col-8 px-0">
+      <div id="task-input" class="d-flex gap-2">
+        <input type="text" id="task" class="form-control p-3" placeholder="Enter a task" class="" />
+        <button id="add-task" class="btn btn-primary col-3">Add Task</button>
+      </div>
+    </div>
+    <div class="col-8 mt-3">
       <div class="row" id="tasks"></div>
     </div>
   </div>
