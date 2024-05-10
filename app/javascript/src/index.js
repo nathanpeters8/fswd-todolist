@@ -1,16 +1,29 @@
 import $ from 'jquery';
 import { indexTasks, postTask, deleteTask, markTaskComplete, markTaskActive } from './requests.js';
 
-var generateTaskHtml = function (response) {
-  var htmlString = response.tasks.map(function (task) {
+var generateTaskHtml = function (filter, response) {
+  var responseTasks = response.tasks;
+
+  if (filter === 'active') {
+    responseTasks = responseTasks.filter(function (task) {
+      return task.completed === false;
+    });
+  }
+  else if (filter === 'completed') {
+    responseTasks = responseTasks.filter(function (task) {
+      return task.completed === true;
+    });
+  }  
+
+  var htmlString = responseTasks.map(function (task) {
     return (
       "<div id='task" +
       task.id +
-      "' class='col-12 px-2 py-3 mb-1 border rounded task d-flex align-items-center justify-content-evenly' data-id='" +
+      "' class='col-12 px-2 py-3 mb-1 border border-dark rounded task d-flex align-items-center justify-content-evenly "+ (task.completed ? 'completed' : '') +"' data-id='" +
       task.id +
-      "'><input type='button' class='delete-task btn btn-outline-danger px-3 py-0 fs-4' value='X' title='Delete' /><h4 class='task-text text-wrap col-3 font-monospace'>" +
+      "'><input type='button' class='delete-task btn btn-outline-danger px-3 py-0 fs-4' value='X' title='Delete' /><h4 class='task-text text-wrap col-3 font-monospace " + (task.completed ? 'completed-text' : '') + "'>" +
       task.content +
-      "</h4><input type='checkbox' class='mark-complete form-check-input form-check p-3' title='Mark Complete' /></div>"
+      "</h4><input type='checkbox' class='mark-complete form-check-input form-check p-3' title='Mark Complete' " + (task.completed ? "checked" : "") + "/></div>"
     );
   });
   return htmlString;
@@ -20,9 +33,11 @@ var generateTaskHtml = function (response) {
 document.addEventListener('turbolinks:load', function () {
   $('#task-input').val('');
 
+  var filter = 'all';
+
   // index tasks
   indexTasks(function (response) {
-    var htmlString = generateTaskHtml(response);
+    var htmlString = generateTaskHtml('all', response);
     $('#tasks').html(htmlString);
   });
 
@@ -35,7 +50,7 @@ document.addEventListener('turbolinks:load', function () {
       function (response) {
         console.log('task posted successfully: ', response);
         indexTasks(function (response) {
-          var htmlString = generateTaskHtml(response);
+          var htmlString = generateTaskHtml(filter, response);
           $('#tasks').html(htmlString);
           $('#task-input').val('');
         });
@@ -56,7 +71,7 @@ document.addEventListener('turbolinks:load', function () {
       function (response) {
         console.log('task deleted successfully: ', response);
         indexTasks(function (response) {
-          var htmlString = generateTaskHtml(response);
+          var htmlString = generateTaskHtml('all', response);
           $('#tasks').html(htmlString);
         });
       },
@@ -84,6 +99,10 @@ document.addEventListener('turbolinks:load', function () {
         taskId,
         function (response) {
           console.log('task marked complete successfully: ', response);
+          indexTasks(function (response) {
+            var htmlString = generateTaskHtml(filter, response);
+            $('#tasks').html(htmlString);
+          });
         },
         function (error) {
           console.log('error from markTaskComplete callback: ', error);
@@ -93,6 +112,10 @@ document.addEventListener('turbolinks:load', function () {
     else {
       markTaskActive( taskId, function (response) {
         console.log('task marked active successfully: ', response);
+        indexTasks(function (response) {
+          var htmlString = generateTaskHtml(filter, response);
+          $('#tasks').html(htmlString);
+        });
       },
       function (error) {
         console.log('error from markTaskActive callback: ', error);
@@ -101,7 +124,27 @@ document.addEventListener('turbolinks:load', function () {
   });
 
   // change task background color on hover
-  $('#tasks').on('mouseenter mouseleave', '.task', function (event) {
+  $('#tasks').on('mouseenter mouseleave', '.task:not(.completed)', function (event) {
     $(this).toggleClass('bg-light');
+  });
+
+  // filter tasks
+  $('#filter-buttons').on('click', 'button', function (event) {
+    var buttonId = $(this).attr('id');
+    console.log('Button ID:', buttonId);
+
+    // set filter
+    filter = buttonId;
+
+    $('#filter-buttons button').removeClass('btn-secondary');
+    $('#filter-buttons button').addClass('btn-warning');
+    $(this).addClass('btn-secondary');
+    $(this).removeClass('btn-warning');
+
+    // filter tasks
+    indexTasks(function (response) {
+      var htmlString = generateTaskHtml(filter, response);
+      $('#tasks').html(htmlString);
+    });
   });
 });

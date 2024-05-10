@@ -7,11 +7,16 @@
     <div class="col-8 px-0">
       <div id="task-input-div" class="d-flex gap-2">
         <input type="text" id="task-input" class="form-control p-3" placeholder="Enter a task" />
-        <button id="add-task" class="btn btn-primary col-3">Add Task</button>
+        <button id="add-task" class="btn btn-success col-3">Add Task</button>
       </div>
     </div>
     <div class="col-8 mt-3">
       <div class="row" id="tasks"></div>
+    </div>
+    <div id='filter-buttons' class="col-8 d-flex justify-content-center mt-1 mb-3 btn-group-sm">
+      <button title="Filter all tasks" id="all" class="btn btn-secondary me-2 mt-3">All</button>
+      <button title="Filter active tasks" id="active" class="btn btn-warning me-2 mt-3">Active</button>
+      <button title="Filter completed tasks" id="completed" class="btn btn-warning mt-3">Completed</button>
     </div>
   </div>
 </div>
