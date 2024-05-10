@@ -15,6 +15,7 @@ export var indexTasks = function(successCB, errorCB) {
     error: errorCB
   }
 
+  console.log(request);
   $.ajax(request);
 };
 
@@ -25,16 +26,12 @@ export var postTask = function (content, successCB, errorCB) {
     data: {
       task: {
         content: content,
-      },
+      }
     },
     success: successCB,
     error: errorCB
   };
 
+  console.log(request);
   $.ajax(request);
 };
-
-
-indexTasks();
-
-//postTask('this is some other task...');

@@ -1,1 +1,3 @@
-import '../src/index.js';
+import 'src/index';
+
+console.log('Hello World from Webpacker');
